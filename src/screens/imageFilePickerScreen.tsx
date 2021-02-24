@@ -1,36 +1,124 @@
 /* eslint-disable */
 
-import React, {FC} from 'react';
-import {View, Text, TouchableOpacity , StyleSheet} from 'react-native';
+import React from 'react';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    Platform,
+    Alert
+} from 'react-native';
+import ImagePicker, {Image} from 'react-native-image-crop-picker';
 
-const App : FC = () => {
+// interface Props{}
+//
+// interface State{
+//     imageUri? : any
+//     detectedText? : any
+// }
 
-    //const onPress = null;
+//export default class App extends React.Component<Props,State> {
+export default class App extends React.Component {
+    state = {
+        imageUri: "",
+        detectedText: ""
+    }
+    // constructor( props:Props ) {
+    //     super(props);
+    //     this.state = {
+    //         imageUri : null,
+    //         detectedText: null
+    //     };
+    // }
+
     // onPress={console.log("Take photo button pressed")}
+    uploadImage = async () => {
+        // Check selected image is not null
+        if (this.state.imageUri != null) {
 
-    return(
-        <View style={styles.panel}>
-            <View style={{alignItems: 'center'}}>
-                <Text style={styles.panelTitle}>Upload Photo</Text>
-                <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
+            const selectedImage = this.state.imageUri;
+            console.log("+++++ selected url " + selectedImage);
+            const data = new FormData();
+            data.append("image", {
+                name: "image",
+                type: "image/jpg",              //   type: "image/png",
+                uri:
+                    Platform.OS === "android"
+                        ? this.state.imageUri
+                        : this.state.imageUri.replace("file://", "")
+            });
+
+            var url = "http://192.168.10.233:8080/inputImage";
+            //var value = null;
+
+            let res = await fetch(url, {
+                method: "POST",
+                body: data,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Accept: "application/json",  // text/html, text/plain
+                }
+            }).then((response) => this.setState({detectedText: response.json()}))
+              .catch(error => console.log(error))
+            ;
+            console.log( "Detected text: "+this.state.detectedText);
+
+            let responseJson = this.state.detectedText;
+            if (responseJson !== "") {
+                Alert.alert("Profile picture updated Successful");
+            } else {
+                Alert.alert("Something went wrong, please try again");
+            }
+        } else {
+            Alert.alert("Please Select image first");
+        }
+    };
+
+    takePhotoFromCamera = () => {
+        ImagePicker.openCamera({
+            width: 300,
+            height: 400,
+            cropping: true,
+        }).then(image => {
+            console.log(image);
+            this.setState({imageUri: image.path})
+        });
+    }
+
+    choosePhotoFromLibrary = () => {
+        ImagePicker.openPicker({
+            width: 300,
+            height: 400,
+            cropping: true
+        }).then(image => {
+            console.log(image);
+            this.setState({imageUri: image.path})
+        });
+    }
+
+    render() {
+        return (
+            <View style={styles.panel}>
+                <View style={{alignItems: 'center'}}>
+                    <Text style={styles.panelTitle}>Upload Photo</Text>
+                    <Text style={styles.panelSubtitle}>Choose Picture To Upload</Text>
+                </View>
+                <TouchableOpacity style={styles.panelButton} onPress={this.takePhotoFromCamera}>
+                    <Text style={styles.panelButtonTitle}>Take Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.panelButton} onPress={this.choosePhotoFromLibrary}>
+                    <Text style={styles.panelButtonTitle}>Choose From Library</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.panelButton}
+                    onPress={this.uploadImage}>
+                    <Text style={styles.panelButtonTitle}>Upload</Text>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.panelButton}>
-                <Text style={styles.panelButtonTitle}>Take Photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.panelButton}  >
-                <Text style={styles.panelButtonTitle}>Choose From Library</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.panelButton}
-               >
-                <Text style={styles.panelButtonTitle}>Cancel</Text>
-            </TouchableOpacity>
-        </View>
-    )
+        )
+    }
 }
-
-export default App;
-
 
 
 const styles = StyleSheet.create({
