@@ -7,9 +7,12 @@ import {
     TouchableOpacity,
     StyleSheet,
     Platform,
-    Alert, ScrollView
+    Alert,
+    ScrollView,
+    Image
 } from 'react-native';
-import ImagePicker, {Image} from 'react-native-image-crop-picker';
+import ImagePicker from 'react-native-image-crop-picker';
+
 
 // interface Props{}
 //
@@ -22,8 +25,8 @@ import ImagePicker, {Image} from 'react-native-image-crop-picker';
 export default class App extends React.Component {
     state = {
         imageUri: "",
-        detectedText: "",
-        showDetectedTxt: false
+        processedImage: "",
+        showProcessedImage: false
     }
     // constructor( props:Props ) {
     //     super(props);
@@ -50,26 +53,26 @@ export default class App extends React.Component {
                         : this.state.imageUri.replace("file://", "")
             });
 
-            var url = "http://192.168.10.233:8080/inputImage";
+            var url = "http://192.168.10.233:8080/faceRecon";
 
             await fetch(url, {
                 method: "POST",
                 body: data,
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    "Accept" : "application/json, text/html, text/plain"  // text/html, text/plain
+                    "Accept" : "*/*"//"application/json, text/html, text/plain"  // text/html, text/plain
                 }
             })
                 .then(response => response.text().then(data => data))
-                .then(result => this.setState({detectedText : result}))
-                .catch(error => console.log("Error: "+error));
-            console.log( "Detected text: "+this.state.detectedText);
+                 .then(result => this.setState({processedImage :  'data:image/jpeg;base64,' + result +'' }))
+               .catch(error => console.log("Error: "+error));
+        //    console.log( "Processed image: "+this.state.processedImage);
 
 
-            let responseJson = this.state.detectedText;
-            if (responseJson !== "") {
+            let response = this.state.processedImage;
+            if (response !== "") {
                 Alert.alert("Profile picture updated Successful");
-                this.setState({showDetectedTxt : true})
+                this.setState({showProcessedImage : true})
             } else {
                 Alert.alert("Something went wrong, please try again");
             }
@@ -121,12 +124,10 @@ export default class App extends React.Component {
         <Text style={styles.panelButtonTitle}>Upload</Text>
             </TouchableOpacity>
         {
-            this.state.showDetectedTxt?
+            this.state.showProcessedImage?
                 <View style={styles.detectedTxt}>
-                <Text style={styles.textOnIt}> Detected Text From Image :</Text>
-        <Text style={styles.textOnIt}>
-            {this.state.detectedText}
-            </Text>
+                <Text style={styles.textOnIt}> Face Recognition On Image :</Text>
+        <Image source={{uri: this.state.processedImage}} style={{height: 500, width: 550}} resizeMode={"contain"} />
             </View>
         :null
         }
