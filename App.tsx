@@ -119,10 +119,30 @@
 
 /* eslint-disable */
 import React from "react";
-import {ImageFilePickerScreen} from "./src/screens/screenIndex"
+import {ImageFilePickerScreen, ImageFilePickerFaceReconScreen} from "./src/screens/screenIndex"
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
 
 export default function App(){
-  return(
-      <ImageFilePickerScreen/>
-  )
+
+  const Stack = createStackNavigator();
+  //const MyStack = () => {
+    return (
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+                name="TextDetection"
+                component={ImageFilePickerScreen}
+                options={{ title: 'TextDetection' }}
+            />
+            <Stack.Screen name="FaceDetection" component={ImageFilePickerFaceReconScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+    );
+ // };
+
+  // return(
+  //     <ImageFilePickerScreen/>
+  // )
 }

@@ -1,5 +1,6 @@
 /* eslint-disable */
 
 import ImageFilePickerScreen from "./imageFilePickerScreen";
+import ImageFilePickerFaceReconScreen from "./imageFilePickerFaceReconScreen";
 
-export {ImageFilePickerScreen}
+export {ImageFilePickerScreen, ImageFilePickerFaceReconScreen}

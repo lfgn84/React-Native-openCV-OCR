@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     Platform,
-    Alert, ScrollView, Button
+    Alert, ScrollView
 } from 'react-native';
 import ImagePicker, {Image} from 'react-native-image-crop-picker';
 
@@ -52,7 +52,7 @@ export default class App extends React.Component {
 
             var url = "http://192.168.10.233:8080/inputImage";
 
-             await fetch(url, {
+            await fetch(url, {
                 method: "POST",
                 body: data,
                 headers: {
@@ -60,9 +60,9 @@ export default class App extends React.Component {
                     "Accept" : "application/json, text/html, text/plain"  // text/html, text/plain
                 }
             })
-                 .then(response => response.text().then(data => data))
-                 .then(result => this.setState({detectedText : result}))
-                 .catch(error => console.log("Error: "+error));
+                .then(response => response.text().then(data => data))
+                .then(result => this.setState({detectedText : result}))
+                .catch(error => console.log("Error: "+error));
             console.log( "Detected text: "+this.state.detectedText);
 
 
@@ -103,43 +103,37 @@ export default class App extends React.Component {
     render() {
         return (
             <View style={styles.panel}>
-                <ScrollView>
+            <ScrollView>
 
                 <View style={{alignItems: 'center'}}>
-                    <Text style={styles.panelTitle}>Detect Text From Image</Text>
-                    <Text style={styles.panelSubtitle}>Choose Picture To Upload</Text>
-                </View>
-                <TouchableOpacity style={styles.panelButton} onPress={this.takePhotoFromCamera}>
-                    <Text style={styles.panelButtonTitle}>Take Photo</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.panelButton} onPress={this.choosePhotoFromLibrary}>
-                    <Text style={styles.panelButtonTitle}>Choose From Library</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.panelButton}
-                    onPress={this.uploadImage}>
-                    <Text style={styles.panelButtonTitle}>Upload</Text>
-                </TouchableOpacity>
-                 <TouchableOpacity
-                        style={styles.navButton}
-                        onPress={()=> this.props.navigation.navigate('FaceDetection')}>
-                        <Text style={styles.panelButtonTitle}>Go To Face Recognition</Text>
-                    </TouchableOpacity>
-
-                {
-                    this.state.showDetectedTxt?
-                        <View style={styles.detectedTxt}>
-                            <Text style={styles.textOnIt}> Detected Text From Image :</Text>
-                            <Text style={styles.textOnIt}>
-                                {this.state.detectedText}
-                            </Text>
-                        </View>
-                        :null
-                }
-                </ScrollView>
+        <Text style={styles.panelTitle}>Face Recognition From Image</Text>
+        <Text style={styles.panelSubtitle}>Choose Picture To Upload</Text>
+        </View>
+        <TouchableOpacity style={styles.panelButton} onPress={this.takePhotoFromCamera}>
+        <Text style={styles.panelButtonTitle}>Take Photo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.panelButton} onPress={this.choosePhotoFromLibrary}>
+        <Text style={styles.panelButtonTitle}>Choose From Library</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+        style={styles.panelButton}
+        onPress={this.uploadImage}>
+        <Text style={styles.panelButtonTitle}>Upload</Text>
+            </TouchableOpacity>
+        {
+            this.state.showDetectedTxt?
+                <View style={styles.detectedTxt}>
+                <Text style={styles.textOnIt}> Detected Text From Image :</Text>
+        <Text style={styles.textOnIt}>
+            {this.state.detectedText}
+            </Text>
             </View>
+        :null
+        }
+        </ScrollView>
+        </View>
 
-        )
+    )
     }
 }
 
@@ -176,7 +170,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     panelTitle: {
-        fontSize: 27,
+        fontSize: 20,
         height: 35,
     },
     panelSubtitle: {
@@ -189,13 +183,6 @@ const styles = StyleSheet.create({
         padding: 13,
         borderRadius: 10,
         backgroundColor: '#FF6347',
-        alignItems: 'center',
-        marginVertical: 7,
-    },
-    navButton:{
-        padding: 13,
-        borderRadius: 10,
-        backgroundColor: '#33cbff',
         alignItems: 'center',
         marginVertical: 7,
     },
