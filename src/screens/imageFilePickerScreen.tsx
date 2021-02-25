@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
     StyleSheet,
     Platform,
-    Alert
+    Alert, ScrollView
 } from 'react-native';
 import ImagePicker, {Image} from 'react-native-image-crop-picker';
 
@@ -22,7 +22,8 @@ import ImagePicker, {Image} from 'react-native-image-crop-picker';
 export default class App extends React.Component {
     state = {
         imageUri: "",
-        detectedText: ""
+        detectedText: "",
+        showDetectedTxt: false
     }
     // constructor( props:Props ) {
     //     super(props);
@@ -38,7 +39,7 @@ export default class App extends React.Component {
         if (this.state.imageUri != null) {
 
             const selectedImage = this.state.imageUri;
-            console.log("+++++ selected url " + selectedImage);
+            console.log(" selected url " + selectedImage);
             const data = new FormData();
             data.append("image", {
                 name: "image",
@@ -50,23 +51,25 @@ export default class App extends React.Component {
             });
 
             var url = "http://192.168.10.233:8080/inputImage";
-            //var value = null;
 
-            let res = await fetch(url, {
+             await fetch(url, {
                 method: "POST",
                 body: data,
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    Accept: "application/json",  // text/html, text/plain
+                    "Accept" : "application/json, text/html, text/plain"  // text/html, text/plain
                 }
-            }).then((response) => this.setState({detectedText: response.json()}))
-              .catch(error => console.log(error))
-            ;
+            })
+                 .then(response => response.text().then(data => data))
+                 .then(result => this.setState({detectedText : result}))
+                 .catch(error => console.log("Error: "+error));
             console.log( "Detected text: "+this.state.detectedText);
+
 
             let responseJson = this.state.detectedText;
             if (responseJson !== "") {
                 Alert.alert("Profile picture updated Successful");
+                this.setState({showDetectedTxt : true})
             } else {
                 Alert.alert("Something went wrong, please try again");
             }
@@ -100,8 +103,10 @@ export default class App extends React.Component {
     render() {
         return (
             <View style={styles.panel}>
+                <ScrollView>
+
                 <View style={{alignItems: 'center'}}>
-                    <Text style={styles.panelTitle}>Upload Photo</Text>
+                    <Text style={styles.panelTitle}>Detect Text From Image</Text>
                     <Text style={styles.panelSubtitle}>Choose Picture To Upload</Text>
                 </View>
                 <TouchableOpacity style={styles.panelButton} onPress={this.takePhotoFromCamera}>
@@ -115,13 +120,39 @@ export default class App extends React.Component {
                     onPress={this.uploadImage}>
                     <Text style={styles.panelButtonTitle}>Upload</Text>
                 </TouchableOpacity>
+                {
+                    this.state.showDetectedTxt?
+                        <View style={styles.detectedTxt}>
+                            <Text style={styles.textOnIt}> Detected Text From Image :</Text>
+                            <Text style={styles.textOnIt}>
+                                {this.state.detectedText}
+                            </Text>
+                        </View>
+                        :null
+                }
+                </ScrollView>
             </View>
+
         )
     }
 }
 
 
 const styles = StyleSheet.create({
+    detectedTxt:{
+        padding: 30 ,
+        alignItems: 'center',
+        backgroundColor: "grey",
+        borderRadius: 4,
+        marginTop:40
+
+    },
+    textOnIt:{
+        fontWeight: 'bold',
+        color: 'white',
+        fontSize: 17,
+        marginBottom: 17
+    },
     panel: {
         padding: 20,
         backgroundColor: '#FFFFFF',
