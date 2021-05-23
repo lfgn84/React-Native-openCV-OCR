@@ -13,32 +13,14 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
-
-// interface Props{}
-//
-// interface State{
-//     imageUri? : any
-//     detectedText? : any
-// }
-
-//export default class App extends React.Component<Props,State> {
 export default class App extends React.Component {
     state = {
         imageUri: "",
         processedImage: "",
         showProcessedImage: false
     }
-    // constructor( props:Props ) {
-    //     super(props);
-    //     this.state = {
-    //         imageUri : null,
-    //         detectedText: null
-    //     };
-    // }
 
-    // onPress={console.log("Take photo button pressed")}
     uploadImage = async () => {
-        // Check selected image is not null
         if (this.state.imageUri != null) {
 
             const selectedImage = this.state.imageUri;
@@ -46,7 +28,7 @@ export default class App extends React.Component {
             const data = new FormData();
             data.append("image", {
                 name: "image",
-                type: "image/jpg",              //   type: "image/png",
+                type: "image/jpg",
                 uri:
                     Platform.OS === "android"
                         ? this.state.imageUri
@@ -60,18 +42,17 @@ export default class App extends React.Component {
                 body: data,
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    "Accept" : "*/*"//"application/json, text/html, text/plain"  // text/html, text/plain
+                    "Accept" : "*/*"
                 }
             })
                 .then(response => response.text().then(data => data))
                  .then(result => this.setState({processedImage :  'data:image/jpeg;base64,' + result +'' }))
                .catch(error => console.log("Error: "+error));
-        //    console.log( "Processed image: "+this.state.processedImage);
 
 
             let response = this.state.processedImage;
             if (response !== "") {
-                Alert.alert("Profile picture updated Successful");
+                Alert.alert("Picture Loaded Successfully");
                 this.setState({showProcessedImage : true})
             } else {
                 Alert.alert("Something went wrong, please try again");
@@ -125,7 +106,7 @@ export default class App extends React.Component {
             </TouchableOpacity>
         {
             this.state.showProcessedImage?
-                <View style={styles.detectedTxt}>
+                <View style={styles.detectedFace}>
                 <Text style={styles.textOnIt}> Face Recognition On Image :</Text>
         <Image source={{uri: this.state.processedImage}} style={{height: 500, width: 550}} resizeMode={"contain"} />
             </View>
@@ -140,11 +121,11 @@ export default class App extends React.Component {
 
 
 const styles = StyleSheet.create({
-    detectedTxt:{
+    detectedFace:{
         padding: 30 ,
         alignItems: 'center',
-        backgroundColor: "grey",
-        borderRadius: 4,
+        backgroundColor: "#D3D3D3",
+        borderRadius: 10,
         marginTop:40
 
     },

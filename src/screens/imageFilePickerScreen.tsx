@@ -11,31 +11,14 @@ import {
 } from 'react-native';
 import ImagePicker, {Image} from 'react-native-image-crop-picker';
 
-// interface Props{}
-//
-// interface State{
-//     imageUri? : any
-//     detectedText? : any
-// }
-
-//export default class App extends React.Component<Props,State> {
 export default class App extends React.Component {
     state = {
         imageUri: "",
         detectedText: "",
         showDetectedTxt: false
     }
-    // constructor( props:Props ) {
-    //     super(props);
-    //     this.state = {
-    //         imageUri : null,
-    //         detectedText: null
-    //     };
-    // }
 
-    // onPress={console.log("Take photo button pressed")}
     uploadImage = async () => {
-        // Check selected image is not null
         if (this.state.imageUri != null) {
 
             const selectedImage = this.state.imageUri;
@@ -43,7 +26,7 @@ export default class App extends React.Component {
             const data = new FormData();
             data.append("image", {
                 name: "image",
-                type: "image/jpg",              //   type: "image/png",
+                type: "image/jpg",
                 uri:
                     Platform.OS === "android"
                         ? this.state.imageUri
@@ -57,7 +40,7 @@ export default class App extends React.Component {
                 body: data,
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    "Accept" : "application/json, text/html, text/plain"  // text/html, text/plain
+                    "Accept" : "application/json, text/html, text/plain"
                 }
             })
                  .then(response => response.text().then(data => data))
@@ -68,7 +51,7 @@ export default class App extends React.Component {
 
             let responseJson = this.state.detectedText;
             if (responseJson !== "") {
-                Alert.alert("Profile picture updated Successful");
+                Alert.alert(" Picture Loaded Successfully");
                 this.setState({showDetectedTxt : true})
             } else {
                 Alert.alert("Something went wrong, please try again");
@@ -148,14 +131,14 @@ const styles = StyleSheet.create({
     detectedTxt:{
         padding: 30 ,
         alignItems: 'center',
-        backgroundColor: "grey",
-        borderRadius: 4,
+        backgroundColor: "#D3D3D3",
+        borderRadius: 10,
         marginTop:40
 
     },
     textOnIt:{
         fontWeight: 'bold',
-        color: 'white',
+        color: 'black',
         fontSize: 17,
         marginBottom: 17
     },
